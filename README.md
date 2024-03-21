@@ -1,1 +1,1 @@
-# bds_octave
+This is the octave version of BDS (https://github.com/blockwise-direct-search/bds_octave).
