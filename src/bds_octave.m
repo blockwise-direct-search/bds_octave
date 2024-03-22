@@ -145,10 +145,11 @@ end
 if ~isfield(options, "seed")
     options.seed = get_default_constant("seed");
 end
-% The 'RandStream' function is not yet implemented in Octave.
+
+% The 'RandStream' function is not yet implemented in Octave. So the following line
+% does not work in Octave.
 % random_stream = RandStream("mt19937ar", "Seed", options.seed);
-% TODO: maybe we need to find another way to define random_stream.
-random_stream = 100000;
+rand("seed", options.seed);
 
 % Get the dimension of the problem.
 n = length(x0);
@@ -159,14 +160,14 @@ end
 
 % If there exists the field "direction_set_type" of options, then we will generate the direction
 % set according to the value of "direction_set_type".
-% if isfield(options, "direction_set_type") 
-%     if strcmpi(options.direction_set_type, "randomized_orthogonal")
-%         random_matrix = random_stream.randn(n); 
-%         [options.direction_set, ~] = qr(random_matrix); 
-%     elseif strcmpi(options.direction_set_type, "randomized")
-%         options.direction_set = random_stream.randn(n); 
-%     end
-% end
+if isfield(options, "direction_set_type") 
+    if strcmpi(options.direction_set_type, "randomized_orthogonal")
+        random_matrix = randn(n); 
+        [options.direction_set, ~] = qr(random_matrix); 
+    elseif strcmpi(options.direction_set_type, "randomized")
+        options.direction_set = randn(n); 
+    end
+end
 % Get the direction set.
 D = get_direction_set(n, options);
 
@@ -428,7 +429,7 @@ end
 % If there exists the field "block_indices_permuted_init" of options, and its value is true,
 % then we will permute the block_indices at the very beginning.
 if isfield(options, "block_indices_permuted_init") && options.block_indices_permuted_init
-    all_block_indices = random_stream.randperm(num_blocks);
+    all_block_indices = randperm(num_blocks);
 else
     all_block_indices = (1:num_blocks);
 end
@@ -450,8 +451,6 @@ for iter = 1:maxit
         % iterations if the Algorithm is "pbds". Note that block_indices gets initialized 
         % when iter = 1. 
         block_indices = randperm(num_blocks);
-        % random_stream does not work in Octave.
-        % block_indices = random_stream.randperm(num_blocks);
     elseif strcmpi(options.Algorithm, "rbds")
         % Get the block that is going to be visited in this iteration when the Algorithm is "rbds".
         % This block should not have been visited in the previous replacement_delay iterations.
@@ -459,7 +458,6 @@ for iter = 1:maxit
         unavailable_block_indices = block_hist(max(1, iter-replacement_delay) : iter - 1);
         available_block_indices = setdiff(all_block_indices, unavailable_block_indices);
         % Select a block randomly from available_block_indices.
-        % idx = random_stream.randi(length(available_block_indices));
         idx = randi(length(available_block_indices));
         block_indices = available_block_indices(idx);  % a vector of length 1
     elseif strcmpi(options.Algorithm, "scbds")

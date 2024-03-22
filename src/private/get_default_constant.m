@@ -24,7 +24,7 @@ switch constant_name
     case {"replacement_delay"}
         constant_value = 1;
     case {"seed"}
-        constant_value = "shuffle";
+        constant_value = 100000;
     case {"ftarget"}
         constant_value = -inf;
     case {"polling_inner"}
