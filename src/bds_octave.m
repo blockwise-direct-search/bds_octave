@@ -449,7 +449,9 @@ for iter = 1:maxit
         % Starting from the very first iteration, permute the blocks every permuting_period 
         % iterations if the Algorithm is "pbds". Note that block_indices gets initialized 
         % when iter = 1. 
-        block_indices = random_stream.randperm(num_blocks);
+        block_indices = randperm(num_blocks);
+        % random_stream does not work in Octave.
+        % block_indices = random_stream.randperm(num_blocks);
     elseif strcmpi(options.Algorithm, "rbds")
         % Get the block that is going to be visited in this iteration when the Algorithm is "rbds".
         % This block should not have been visited in the previous replacement_delay iterations.
@@ -457,7 +459,8 @@ for iter = 1:maxit
         unavailable_block_indices = block_hist(max(1, iter-replacement_delay) : iter - 1);
         available_block_indices = setdiff(all_block_indices, unavailable_block_indices);
         % Select a block randomly from available_block_indices.
-        idx = random_stream.randi(length(available_block_indices));
+        % idx = random_stream.randi(length(available_block_indices));
+        idx = randi(length(available_block_indices));
         block_indices = available_block_indices(idx);  % a vector of length 1
     elseif strcmpi(options.Algorithm, "scbds")
         % Get the block that is going to be visited in this iteration when the Algorithm 
